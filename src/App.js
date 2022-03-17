@@ -1,23 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useEffect, useState } from "react";
 
 function App() {
+  const [question, setQuestion] = useState();
+  const [form, setForm] = useState("hello");
+
+  useEffect(() => {}, []);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setForm((prevVal) => [...prevVal, val]);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let params = encodeURIComponent(form);
+    let uri = "https://8ball.delegator.com/magic/JSON/" + params;
+    const response = fetch(uri)
+      .then((response) => response.json())
+      .then((json) => {
+        setQuestion(json);
+        setTimeout(() => {
+          setQuestion("");
+        }, 3000);
+      });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form>
+        <label>
+          Ask the Magic Eightball a question
+          <div>
+            <input
+              type="text"
+              name="question"
+              id="question"
+              onChange={handleChange}
+            ></input>
+            <button forhtml="question" type="sumbit" onClick={handleSubmit}>
+              Submit
+            </button>
+          </div>
+        </label>
+      </form>
+      <div className="answer">{question && question.magic.answer}</div>
     </div>
   );
 }
